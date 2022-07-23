@@ -43,8 +43,15 @@ tk.Button(window, text = "Login", command =check_data).grid(row = 2, column = 1,
 window.resizable(False,False)
 window.mainloop()
 
-            
+sql = "INSERT INTO board(title, content, writer) VALUES ('test', 'test','asdf')"
+cur.execute(sql);
+sql = "SELECT LAST_INSERT_ID()"
+cur.execute(sql)
+result = cur.fetchall()
+bno = result[0][0]
+print(bno)            
 Check = 0 
+new = 0
 dict = {} 
 list = [0,0,0] 
 ser = serial.Serial('COM5', 9600)
@@ -126,7 +133,7 @@ while True:
                             if (list.index(max_value) == 0): # angry로 시리얼 통신
                                 if ser.readable() :
                                     val = 'angry'
-                                    sql = "INSERT INTO chart value(9,9,'%s',now(),now());" %(val)
+                                    sql = "INSERT INTO chart(bno,comment) VALUES ('%s','분노')" %(bno)
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -139,7 +146,7 @@ while True:
                             elif (list.index(max_value) == 1): # happy로 시리얼 통신
                                 if ser.readable() :
                                     val = 'happy'
-                                    sql = "INSERT INTO chart value(9,9,'%s',now(),now());" %(val)
+                                    sql = "INSERT INTO chart(bno,comment) VALUES ('%s','행복')" %(bno)
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -151,9 +158,8 @@ while True:
                             elif (list.index(max_value) == 2): # neutral로 시리얼 통신
                                 if ser.readable() :
                                     val = 'neutral'
-                                    sql = "INSERT INTO chart value(9,9,'%s',now(),now());" %(val)
+                                    sql = "INSERT INTO chart(bno,comment) VALUES ('%s','중립')" %(bno)
                                     cur.execute(sql)
-                                    conn.commit()
                                     val = val.encode('utf-8')
                                     ser.write(val)
                                     print("Atomize TURNED OFF")
@@ -187,7 +193,10 @@ while True:
         cv2.imshow('your_face', frameClone)
         cv2.imshow("Probabilities", canvas)
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            
             break
 
+conn.commit()
+conn.close()
 camera.release()
 cv2.destroyAllWindows()

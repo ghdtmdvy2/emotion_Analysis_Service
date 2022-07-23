@@ -133,7 +133,7 @@ while True:
                             if (list.index(max_value) == 0): # angry로 시리얼 통신
                                 if ser.readable() :
                                     val = 'angry'
-                                    sql = "INSERT INTO chart(bno,comment) VALUES ('%s','분노')" %(bno)
+                                    sql = "INSERT INTO chart(bno,comment,commenter) VALUES ('%s','분노','%s')" %(bno,user_id.get())
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -146,7 +146,7 @@ while True:
                             elif (list.index(max_value) == 1): # happy로 시리얼 통신
                                 if ser.readable() :
                                     val = 'happy'
-                                    sql = "INSERT INTO chart(bno,comment) VALUES ('%s','행복')" %(bno)
+                                    sql = "INSERT INTO chart(bno,comment,commenter) VALUES ('%s','행복','%s')" %(bno,user_id.get())
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -158,7 +158,7 @@ while True:
                             elif (list.index(max_value) == 2): # neutral로 시리얼 통신
                                 if ser.readable() :
                                     val = 'neutral'
-                                    sql = "INSERT INTO chart(bno,comment) VALUES ('%s','중립')" %(bno)
+                                    sql = "INSERT INTO chart(bno,comment,commenter) VALUES ('%s','중립','%s')" %(bno,user_id.get())
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)

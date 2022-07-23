@@ -17,22 +17,20 @@ window = Tk()
 
 # 사용자 id와 password를 저장하는 변수 생성
 user_id, password = StringVar(), StringVar()
-
+conn = pymysql.connect(host='localhost',port=3306,user='catello',password='1234',db='springbasic',charset='utf8')
+cur = conn.cursor()
 # 사용자 id와 password를 비교하는 함수
 def check_data():
-    conn = pymysql.connect(host='localhost',port=3306,user='catello',password='1234',db='springbasic',charset='utf8')
-    sql = "select id, pwd from user_info where id = '%s' and pwd = '%s'" %(user_id.get(), password.get())
-    with conn:
-        with conn.cursor() as cur:
-            cur.execute(sql)
-            result = cur.fetchall()
-            if len(result) == 0  :
-                print("Check your Username/Password")
-            elif user_id.get() == result[0][0] and password.get() == result[0][1] :
-                print("Logged IN Successfully")
-                quit()
-            else:
-                print("Check your Username/Password")
+    sql = "select id, pwd from user_info where id = '%s' and pwd = '%s'" %(user_id.get(), password.get()) 
+    cur.execute(sql)
+    result = cur.fetchall()
+    if len(result) == 0  :
+        print("Check your Username/Password")
+    elif user_id.get() == result[0][0] and password.get() == result[0][1] :
+        print("Logged IN Successfully")
+        quit()
+    else:
+        print("Check your Username/Password")
         
 def quit():
 	window.destroy()
@@ -45,33 +43,11 @@ tk.Button(window, text = "Login", command =check_data).grid(row = 2, column = 1,
 window.resizable(False,False)
 window.mainloop()
 
-# conn = pymysql.connect(host='localhost',port=3306,user='catello',password='1234',db='springbasic',charset='utf8')
-
-# print("id를 입력해주세요.")
-# id = input()
-# print("비번을 입력해주세요.")
-# pwd = input()
-# # param = input()
-# sql = "select * from user_info where id = '%s' and pwd = '%s'" %(id, pwd)
-
-
-# with conn:
-#     with conn.cursor() as cur:
-#         cur.execute(sql)
-#         result = cur.fetchall()
-        
-#         if len(result) == 0 :
-#           print("id나 비밀번호를 제대로 입력 해주세요.")
-#           exit();
-
-# sqlid = result[0][0]
-# sqlpwd = result[0][1]
             
 Check = 0 
 dict = {} 
 list = [0,0,0] 
 ser = serial.Serial('COM5', 9600)
-
 # parameters for loading data and images
 detection_model_path = 'haarcascade_files/haarcascade_frontalface_default.xml'
 emotion_model_path = 'models/_mini_XCEPTION.83-0.82.hdf5'
@@ -150,8 +126,11 @@ while True:
                             if (list.index(max_value) == 0): # angry로 시리얼 통신
                                 if ser.readable() :
                                     val = 'angry'
+                                    sql = "INSERT INTO chart value(9,9,'%s',now(),now());" %(val)
+                                    cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
+                                    
                                     print("Atomize TURNED ON")
                                 else: continue
                                 print("자신의 감정은 angry입니다.")
@@ -160,6 +139,8 @@ while True:
                             elif (list.index(max_value) == 1): # happy로 시리얼 통신
                                 if ser.readable() :
                                     val = 'happy'
+                                    sql = "INSERT INTO chart value(9,9,'%s',now(),now());" %(val)
+                                    cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
                                     # print("Atomize")
@@ -170,6 +151,9 @@ while True:
                             elif (list.index(max_value) == 2): # neutral로 시리얼 통신
                                 if ser.readable() :
                                     val = 'neutral'
+                                    sql = "INSERT INTO chart value(9,9,'%s',now(),now());" %(val)
+                                    cur.execute(sql)
+                                    conn.commit()
                                     val = val.encode('utf-8')
                                     ser.write(val)
                                     print("Atomize TURNED OFF")

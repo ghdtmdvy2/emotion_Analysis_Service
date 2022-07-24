@@ -12,13 +12,6 @@ from distutils.cmd import Command
 from tkinter import *
 import tkinter as tk
 
-# tkinter 객체 생성
-window = Tk()
-
-# 사용자 id와 password를 저장하는 변수 생성
-user_id, password = StringVar(), StringVar()
-conn = pymysql.connect(host='localhost',port=3306,user='catello',password='1234',db='springbasic',charset='utf8')
-cur = conn.cursor()
 # 사용자 id와 password를 비교하는 함수
 def check_data():
     sql = "select id, pwd from user_info where id = '%s' and pwd = '%s'" %(user_id.get(), password.get()) 
@@ -34,6 +27,14 @@ def check_data():
         
 def quit():
 	window.destroy()
+
+# tkinter 객체 생성
+window = Tk()
+
+# 사용자 id와 password를 저장하는 변수 생성
+user_id, password = StringVar(), StringVar()
+conn = pymysql.connect(host='localhost',port=3306,user='catello',password='1234',db='springbasic',charset='utf8')
+cur = conn.cursor()
 # id와 password, 그리고 확인 버튼의 UI를 만드는 부분
 tk.Label(window, text = "Username : ").grid(row = 0, column = 0, padx = 10, pady = 10)
 tk.Label(window, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
@@ -132,8 +133,11 @@ while True:
                             # 만약에 list의 최댓값이 angry일 때
                             if (list.index(max_value) == 0): # angry로 시리얼 통신
                                 if ser.readable() :
+                                    sum = list[0] + list[1] + list[2]
+                                    list = [list[i]/sum * 100  for i in range(3)]
+                                    print(list)
                                     val = 'angry'
-                                    sql = "INSERT INTO chart(bno,comment,commenter) VALUES ('%s','분노','%s')" %(bno,user_id.get())
+                                    sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -145,8 +149,11 @@ while True:
                             # 만약에 list의 최댓값이 happy일 때
                             elif (list.index(max_value) == 1): # happy로 시리얼 통신
                                 if ser.readable() :
+                                    sum = list[0] + list[1] + list[2]
+                                    list = [list[i]/sum * 100  for i in range(3)]
+                                    print(list)
                                     val = 'happy'
-                                    sql = "INSERT INTO chart(bno,comment,commenter) VALUES ('%s','행복','%s')" %(bno,user_id.get())
+                                    sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -157,8 +164,11 @@ while True:
                             # 만약에 list의 최댓값이 neutral일 때
                             elif (list.index(max_value) == 2): # neutral로 시리얼 통신
                                 if ser.readable() :
+                                    sum = list[0] + list[1] + list[2]
+                                    list = [list[i]/sum * 100  for i in range(3)]
+                                    print(list)
                                     val = 'neutral'
-                                    sql = "INSERT INTO chart(bno,comment,commenter) VALUES ('%s','중립','%s')" %(bno,user_id.get())
+                                    sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)

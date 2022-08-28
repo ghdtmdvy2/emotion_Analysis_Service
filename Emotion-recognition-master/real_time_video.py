@@ -33,7 +33,7 @@ window = Tk()
 
 # 사용자 id와 password를 저장하는 변수 생성
 user_id, password = StringVar(), StringVar()
-conn = pymysql.connect(host='localhost',port=3306,user='catello',password='1234',db='springbasic',charset='utf8')
+conn = pymysql.connect(host='localhost',port=3306,user='test',password='test1234!@#$',db='qna',charset='utf8')
 cur = conn.cursor()
 # id와 password, 그리고 확인 버튼의 UI를 만드는 부분
 tk.Label(window, text = "Username : ").grid(row = 0, column = 0, padx = 10, pady = 10)
@@ -44,7 +44,7 @@ tk.Button(window, text = "Login", command =check_data).grid(row = 2, column = 1,
 window.resizable(False,False)
 window.mainloop()
 
-sql = "INSERT INTO board(title, content, writer) VALUES ('test', 'test','asdf')"
+sql = "INSERT INTO question(subject,content,author_id,created_date,hit_count) VALUES ('test', 'test', 1, now(), 0)"
 cur.execute(sql);
 sql = "SELECT LAST_INSERT_ID()"
 cur.execute(sql)
@@ -137,7 +137,8 @@ while True:
                                     list = [list[i]/sum * 100  for i in range(3)]
                                     print(list)
                                     val = 'angry'
-                                    sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s',1,now(),%f,%f,%f)" %(bno,list[0],list[1],list[2])
+                                    # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -153,7 +154,8 @@ while True:
                                     list = [list[i]/sum * 100  for i in range(3)]
                                     print(list)
                                     val = 'happy'
-                                    sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s',1,now(),%f,%f,%f)" %(bno,list[0],list[1],list[2])
+                                    # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)
@@ -168,7 +170,8 @@ while True:
                                     list = [list[i]/sum * 100  for i in range(3)]
                                     print(list)
                                     val = 'neutral'
-                                    sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s',1,now(),%f,%f,%f)" %(bno,list[0],list[1],list[2])
+                                    # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
                                     ser.write(val)

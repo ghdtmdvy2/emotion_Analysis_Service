@@ -59,9 +59,9 @@ dict = {}
 list = [0,0,0] 
 
 # 라즈베리파이 환경
-# ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 ## 컴퓨터 환경
-ser = serial.Serial('COM5', 9600)
+# ser = serial.Serial('COM5', 9600)
 # parameters for loading data and images
 detection_model_path = 'haarcascade_files/haarcascade_frontalface_default.xml'
 emotion_model_path = 'models/_mini_XCEPTION.83-0.82.hdf5'

@@ -6,53 +6,54 @@ import numpy as np
 import serial
 import time
 import math
+import sys
 import pymysql
 # tkinter를 사용하기 위한 import
 from distutils.cmd import Command
 from tkinter import *
 import tkinter as tk
 
-# 사용자 id와 password를 비교하는 함수
-def check_data():
-    sql = "select username, password from site_user where username = '%s' and password = '%s'" %(user_id.get(), password.get()) 
-    cur.execute(sql)
-    result = cur.fetchall()
-    if len(result) == 0  :
-        print("Check your Username/Password")
-    elif user_id.get() == result[0][0] and password.get() == result[0][1] :
-        print("Logged IN Successfully")
-        quit()
-    else:
-        print("Check your Username/Password")
+# # 사용자 id와 password를 비교하는 함수
+# def check_data():
+#     sql = "select id, pwd from user_info where id = '%s' and pwd = '%s'" %(user_id.get(), password.get()) 
+#     cur.execute(sql)
+#     result = cur.fetchall()
+#     if len(result) == 0  :
+#         print("Check your Username/Password")
+#     elif user_id.get() == result[0][0] and password.get() == result[0][1] :
+#         print("Logged IN Successfully")
+#         quit()
+#     else:
+#         print("Check your Username/Password")
         
-def quit():
-	window.destroy()
+# def quit():
+# 	window.destroy()
 
-# tkinter 객체 생성
-window = Tk()
+# # tkinter 객체 생성
+# window = Tk()
 
 # 사용자 id와 password를 저장하는 변수 생성
-user_id, password = StringVar(), StringVar()
+# user_id, password = StringVar(), StringVar()
 
 conn = pymysql.connect(host='springboot-db.cc58omnt7fw3.ap-northeast-2.rds.amazonaws.com',port=3306,user='admin',password='qwer1234',db='qna',charset='utf8')
 cur = conn.cursor()
 
-# id와 password, 그리고 확인 버튼의 UI를 만드는 부분
-tk.Label(window, text = "Username : ").grid(row = 0, column = 0, padx = 10, pady = 10)
-tk.Label(window, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
-tk.Entry(window, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
-tk.Entry(window, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
-tk.Button(window, text = "Login", command =check_data).grid(row = 2, column = 1, padx = 10, pady = 10)
-window.resizable(False,False)
-window.mainloop()
+## id와 password, 그리고 확인 버튼의 UI를 만드는 부분
+# tk.Label(window, text = "Username : ").grid(row = 0, column = 0, padx = 10, pady = 10)
+# tk.Label(window, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
+# tk.Entry(window, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
+# tk.Entry(window, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
+# tk.Button(window, text = "Login", command =check_data).grid(row = 2, column = 1, padx = 10, pady = 10)
+# window.resizable(False,False)
+# window.mainloop()
 
-sql = "INSERT INTO question(subject,content,author_id,created_date,hit_count) VALUES ('test', 'test', 1, now(), 0)"
-cur.execute(sql);
-sql = "SELECT LAST_INSERT_ID()"
-cur.execute(sql)
-result = cur.fetchall()
-bno = result[0][0]
-print(bno)            
+userId = sys.argv[1];
+print("real_time userId : ",end ='')
+print(userId)
+# print("bno : " + bno);
+quetionId = sys.argv[2];
+print("real_time quetionId : ",end ='')
+print(quetionId)  
 Check = 0 
 new = 0
 dict = {} 
@@ -73,7 +74,7 @@ emotion_classifier = load_model(emotion_model_path, compile=False)
 EMOTIONS = ["angry" , "happy", "neutral"]
 
 # starting video streaming
-cv2.namedWindow('your_face')
+# cv2.namedWindow('your_face')
 camera = cv2.VideoCapture(0)
 try:
     while True:
@@ -143,8 +144,9 @@ try:
                                         sum = list[0] + list[1] + list[2]
                                         list = [list[i]/sum * 100  for i in range(3)]
                                         print(list)
+                                        print(quetionId)
                                         val = 'angry'
-                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s',1,now(),%f,%f,%f)" %(bno,list[0],list[1],list[2])
+                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
                                         # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                         cur.execute(sql)
                                         val = val.encode('utf-8')
@@ -161,7 +163,7 @@ try:
                                         list = [list[i]/sum * 100  for i in range(3)]
                                         print(list)
                                         val = 'happy'
-                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s',1,now(),%f,%f,%f)" %(bno,list[0],list[1],list[2])
+                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
                                         # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                         cur.execute(sql)
                                         val = val.encode('utf-8')
@@ -177,7 +179,7 @@ try:
                                         list = [list[i]/sum * 100  for i in range(3)]
                                         print(list)
                                         val = 'neutral'
-                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s',1,now(),%f,%f,%f)" %(bno,list[0],list[1],list[2])
+                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
                                         # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                         cur.execute(sql)
                                         val = val.encode('utf-8')
@@ -210,8 +212,8 @@ try:
                         cv2.rectangle(frameClone, (fX, fY), (fX + fW, fY + fH),
                                     (0, 0, 255), 2)
 
-            cv2.imshow('your_face', frameClone)
-            cv2.imshow("Probabilities", canvas)
+            # cv2.imshow('your_face', frameClone)
+            # cv2.imshow("Probabilities", canvas)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 
                 break

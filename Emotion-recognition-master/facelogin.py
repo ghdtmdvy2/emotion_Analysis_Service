@@ -2,7 +2,10 @@ import cv2
 import numpy as np
 import subprocess
 import time
+import pymysql
 
+conn = pymysql.connect(host='springboot-db.cc58omnt7fw3.ap-northeast-2.rds.amazonaws.com',port=3306,user='admin',password='qwer1234',db='qna',charset='utf8')
+cur = conn.cursor()
 def countdown(num_of_secs):
     while num_of_secs:
         m, s = divmod(num_of_secs, 60)
@@ -67,7 +70,23 @@ while True:
     if cv2.waitKey(1) > 0: break
 
 
+sql = "select id from site_user where username='%s'" %(id);
+cur.execute(sql);
+result = cur.fetchall()
+user_id = result[0][0]
+print("face login users_id : ",end ='')
+print(user_id)
+sql = "INSERT INTO question(subject,content,author_id,created_date,hit_count) VALUES ('test', 'test', '%s', now(), 0)" %(user_id)
+cur.execute(sql)
+sql = "SELECT LAST_INSERT_ID()"
+cur.execute(sql)
+result = cur.fetchall()
+questionId = result[0][0]
+print("face login questionId : ",end ='')
+print(questionId)
+conn.commit()
+conn.close()
 print("\n [INFO] Exiting Program and cleanup stuff")
 cam.release()
 cv2.destroyAllWindows()
-subprocess.run(["python", "real_time_video.py"])
+subprocess.run(["python", "real_time_video.py", "%d" %(user_id), "%d" %(questionId)]) 

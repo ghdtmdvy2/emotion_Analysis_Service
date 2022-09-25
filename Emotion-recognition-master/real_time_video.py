@@ -62,7 +62,7 @@ list = [0,0,0]
 # # 라즈베리파이 환경
 # ser = serial.Serial('/dev/ttyACM0', 9600)
 # 컴퓨터 환경
-ser = serial.Serial('COM5', 9600)
+# ser = serial.Serial('COM5', 9600)
 # parameters for loading data and images
 detection_model_path = 'haarcascade_files/haarcascade_frontalface_default.xml'
 emotion_model_path = 'models/_mini_XCEPTION.83-0.82.hdf5'
@@ -140,52 +140,81 @@ try:
                                 max_value = max(list)
                                 # 만약에 list의 최댓값이 angry일 때
                                 if (list.index(max_value) == 0): # angry로 시리얼 통신
-                                    if ser.readable() :
-                                        sum = list[0] + list[1] + list[2]
-                                        list = [list[i]/sum * 100  for i in range(3)]
-                                        print(list)
-                                        print(quetionId)
-                                        val = 'angry'
-                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                        # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                        cur.execute(sql)
-                                        val = val.encode('utf-8')
-                                        ser.write(val)
+                                    sum = list[0] + list[1] + list[2]
+                                    list = [list[i]/sum * 100  for i in range(3)]
+                                    print(list)
+                                    print(quetionId)
+                                    val = 'angry'
+                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    cur.execute(sql)
+                                    val = val.encode('utf-8')
+
+                                    ## 아두이노 있을 시
+                                    # if ser.readable() :
+                                    #     sum = list[0] + list[1] + list[2]
+                                    #     list = [list[i]/sum * 100  for i in range(3)]
+                                    #     print(list)
+                                    #     print(quetionId)
+                                    #     val = 'angry'
+                                    #     sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    #     # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    #     cur.execute(sql)
+                                    #     val = val.encode('utf-8')
+                                    #     ser.write(val)
                                         
-                                        print("Atomize TURNED ON")
-                                    else: continue
+                                    #     print("Atomize TURNED ON")
+                                    # else: continue
                                     print("자신의 감정은 angry입니다.")
                                     list = [0,0,0]
                                 # 만약에 list의 최댓값이 happy일 때
                                 elif (list.index(max_value) == 1): # happy로 시리얼 통신
-                                    if ser.readable() :
-                                        sum = list[0] + list[1] + list[2]
-                                        list = [list[i]/sum * 100  for i in range(3)]
-                                        print(list)
-                                        val = 'happy'
-                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                        # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                        cur.execute(sql)
-                                        val = val.encode('utf-8')
-                                        ser.write(val)
-                                        # print("Atomize")
-                                    else: continue
+                                    sum = list[0] + list[1] + list[2]
+                                    list = [list[i]/sum * 100  for i in range(3)]
+                                    print(list)
+                                    val = 'happy'
+                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    cur.execute(sql)
+                                    val = val.encode('utf-8')
+
+                                    ## 아두이노 있을 시
+                                    # if ser.readable() :
+                                    #     sum = list[0] + list[1] + list[2]
+                                    #     list = [list[i]/sum * 100  for i in range(3)]
+                                    #     print(list)
+                                    #     val = 'happy'
+                                    #     sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    #     # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    #     cur.execute(sql)
+                                    #     val = val.encode('utf-8')
+                                    #     ser.write(val)
+                                    #     # print("Atomize")
+                                    # else: continue
                                     print("자신의 감정은 happy입니다.")
                                     list = [0,0,0]
                                 # 만약에 list의 최댓값이 neutral일 때
                                 elif (list.index(max_value) == 2): # neutral로 시리얼 통신
-                                    if ser.readable() :
-                                        sum = list[0] + list[1] + list[2]
-                                        list = [list[i]/sum * 100  for i in range(3)]
-                                        print(list)
-                                        val = 'neutral'
-                                        sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                        # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                        cur.execute(sql)
-                                        val = val.encode('utf-8')
-                                        ser.write(val)
-                                        print("Atomize TURNED OFF")
-                                    else: continue
+                                    sum = list[0] + list[1] + list[2]
+                                    list = [list[i]/sum * 100  for i in range(3)]
+                                    print(list)
+                                    val = 'neutral'
+                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    cur.execute(sql)
+                                    val = val.encode('utf-8')
+                                    # if ser.readable() :
+                                    #     sum = list[0] + list[1] + list[2]
+                                    #     list = [list[i]/sum * 100  for i in range(3)]
+                                    #     print(list)
+                                    #     val = 'neutral'
+                                    #     sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    #     # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
+                                    #     cur.execute(sql)
+                                    #     val = val.encode('utf-8')
+                                    #     ser.write(val)
+                                    #     print("Atomize TURNED OFF")
+                                    # else: continue
                                     print("자신의 감정은 neutral입니다.")
                                     list = [0,0,0]
                             # 혹시 error 가 생겨 설정한 시간 2초 이상이 넘어 갈 경우

@@ -3,8 +3,15 @@ import numpy as np
 import subprocess
 import time
 import pymysql
+import configparser
 
-conn = pymysql.connect(host='springboot-db.cc58omnt7fw3.ap-northeast-2.rds.amazonaws.com',port=3306,user='admin',password='qwer1234',db='qna',charset='utf8')
+config = configparser.ConfigParser()
+config.read('config.ini')
+db_host = config['DB']['HOST']
+db_user = config['DB']['USER']
+db_pass = config['DB'].get("PASS", "default password")
+db_name = config['DB'].get("NAME", False)
+conn = pymysql.connect(host=db_host,port=3306,user=db_user,password=db_pass,db=db_name,charset='utf8')
 cur = conn.cursor()
 def countdown(num_of_secs):
     while num_of_secs:

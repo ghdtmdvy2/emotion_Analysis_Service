@@ -4,6 +4,7 @@ import cv2
 from keras.models import load_model
 import numpy as np
 import serial
+import configparser
 import time
 import math
 import sys
@@ -35,7 +36,13 @@ import tkinter as tk
 # 사용자 id와 password를 저장하는 변수 생성
 # user_id, password = StringVar(), StringVar()
 
-conn = pymysql.connect(host='springboot-db.cc58omnt7fw3.ap-northeast-2.rds.amazonaws.com',port=3306,user='admin',password='qwer1234',db='qna',charset='utf8')
+config = configparser.ConfigParser()
+config.read('config.ini')
+db_host = config['DB']['HOST']
+db_user = config['DB']['USER']
+db_pass = config['DB'].get("PASS", "default password")
+db_name = config['DB'].get("NAME", False)
+conn = pymysql.connect(host=db_host,port=3306,user=db_user,password=db_pass,db=db_name,charset='utf8')
 cur = conn.cursor()
 
 ## id와 password, 그리고 확인 버튼의 UI를 만드는 부분

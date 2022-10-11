@@ -13,6 +13,7 @@ db_pass = config['DB'].get("PASS", "default password")
 db_name = config['DB'].get("NAME", False)
 conn = pymysql.connect(host=db_host,port=3306,user=db_user,password=db_pass,db=db_name,charset='utf8')
 cur = conn.cursor()
+
 def countdown(num_of_secs):
     while num_of_secs:
         m, s = divmod(num_of_secs, 60)
@@ -36,7 +37,15 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 id = 0
 
-names = ['None', 'karina', 'winter', 'ningning', 'giselle']
+names = ['None', 'HongSeungPyo', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
+         '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24',
+         '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36',
+         '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48',
+         '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60',
+         '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72',
+         '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '83', '84',
+         '85', '86', '87', '88', '89', '90', '91', '92', '93', '94', '95', '96',
+         '97', '98', '99', '100']
 
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1980)
@@ -76,10 +85,11 @@ while True:
     if i == 10: break
     if cv2.waitKey(1) > 0: break
 
-
+print(id);
 sql = "select id from site_user where username='%s'" %(id);
 cur.execute(sql);
-result = cur.fetchall()
+result = cur.fetchall();
+print(result);
 user_id = result[0][0]
 print("face login users_id : ",end ='')
 print(user_id)

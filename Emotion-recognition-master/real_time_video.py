@@ -152,7 +152,7 @@ try:
                                     print(list)
                                     print(quetionId)
                                     val = 'angry'
-                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
                                     # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
@@ -180,7 +180,7 @@ try:
                                     list = [list[i]/sum * 100  for i in range(3)]
                                     print(list)
                                     val = 'happy'
-                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
                                     # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')
@@ -206,7 +206,7 @@ try:
                                     list = [list[i]/sum * 100  for i in range(3)]
                                     print(list)
                                     val = 'neutral'
-                                    sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
+                                    sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
                                     # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
                                     cur.execute(sql)
                                     val = val.encode('utf-8')

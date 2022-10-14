@@ -93,7 +93,7 @@ print(result);
 user_id = result[0][0]
 print("face login users_id : ",end ='')
 print(user_id)
-sql = "INSERT INTO question(subject,content,author_id,created_date,hit_count) VALUES ('test', 'test', '%s', now(), 0)" %(user_id)
+sql = "INSERT INTO analysis(subject,content,author_id,created_date,hit_count) VALUES ('test', 'test', '%s', now(), 0)" %(user_id)
 cur.execute(sql)
 sql = "SELECT LAST_INSERT_ID()"
 cur.execute(sql)

@@ -87,6 +87,7 @@ while True:
 
 print(id);
 sql = "select id from site_user where username='%s'" %(id);
+# sql = "select id from site_user where username='admin'";
 cur.execute(sql);
 result = cur.fetchall();
 print(result);

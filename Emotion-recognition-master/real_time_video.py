@@ -65,6 +65,7 @@ Check = 0
 new = 0
 dict = {} 
 list = [0,0,0] 
+cnt = 0;
 
 # # 라즈베리파이 환경
 # ser = serial.Serial('/dev/ttyACM0', 9600)
@@ -72,7 +73,7 @@ list = [0,0,0]
 # ser = serial.Serial('COM5', 9600)
 # parameters for loading data and images
 detection_model_path = 'haarcascade_files/haarcascade_frontalface_default.xml'
-emotion_model_path = 'models/_mini_XCEPTION.83-0.82.hdf5'
+emotion_model_path = 'models/mini_XCEPTION.83-0.82.hdf5'
 
 # hyper-parameters for bounding boxes shape
 # loading models
@@ -81,7 +82,7 @@ emotion_classifier = load_model(emotion_model_path, compile=False)
 EMOTIONS = ["angry" , "happy", "neutral"]
 
 # starting video streaming
-# cv2.namedWindow('your_face')
+cv2.namedWindow('your_face')
 camera = cv2.VideoCapture(0)
 try:
     while True:
@@ -131,111 +132,38 @@ try:
                         # 사람의 감정을 몇 초동안 파악을 해서 그 시간동안 이 사람의 감정이 무엇인지 찾기. 
                 
                         # 딕셔너리(key와 value 값을 가진 것)에 emotion(0~2) key 값과 어떤 감정인지 예측 값 prob(0~1) value 값 저장
-                        dict[emotion] = prob
-                        
-                        # i가 2일 때라는 것은 모든 감정에 대한 예측 값을 딕셔너리에 넣었다는 뜻.   
-                        if ( i == 2 ):
+                        dict[emotion] = prob * 100;
+                        if (i == 2):
                             # 밑에 3줄은 지금 몇 초 지났는지에 대한 것을 result에 갱신
                             end = time.time()
                             result = end-begin
                             result = round(result,1)
-                            # 이 과정을 2초 동안 할 것이기 때문에 계속해서 result 값이 2초인지 확인
-                            if (math.ceil(result) == 2.0):
-                                # 2초를 초기화 하기 위한 Check 값 0으로 설정
+                            cnt = cnt + 1;
+                            list[0] = list[0] + dict['angry'];
+                            list[1] = list[1] + dict['happy'];
+                            list[2] = list[2] + dict['neutral']; 
+                            # 이 과정을 1초 동안 할 것이기 때문에 계속해서 result 값이 2초인지 확인
+                            if (math.ceil(result) >= 2.0):
                                 Check = 0
-                                # 2초동안 어떤 감정을 했는 지에 대한 값을 저장하기 위해 list의 최댓값을 max_value에 저장
-                                max_value = max(list)
-                                # 만약에 list의 최댓값이 angry일 때
-                                if (list.index(max_value) == 0): # angry로 시리얼 통신
-                                    sum = list[0] + list[1] + list[2]
-                                    list = [list[i]/sum * 100  for i in range(3)]
-                                    print(list)
-                                    print(quetionId)
-                                    val = 'angry'
-                                    sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                    # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                    cur.execute(sql)
-                                    val = val.encode('utf-8')
-
-                                    ## 아두이노 있을 시
-                                    # if ser.readable() :
-                                    #     sum = list[0] + list[1] + list[2]
-                                    #     list = [list[i]/sum * 100  for i in range(3)]
-                                    #     print(list)
-                                    #     print(quetionId)
-                                    #     val = 'angry'
-                                    #     sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                    #     # sql = "INSERT INTO chart(bno,commenter,angry,happy,neutral) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                    #     cur.execute(sql)
-                                    #     val = val.encode('utf-8')
-                                    #     ser.write(val)
-                                        
-                                    #     print("Atomize TURNED ON")
-                                    # else: continue
-                                    print("자신의 감정은 angry입니다.")
-                                    list = [0,0,0]
-                                # 만약에 list의 최댓값이 happy일 때
-                                elif (list.index(max_value) == 1): # happy로 시리얼 통신
-                                    sum = list[0] + list[1] + list[2]
-                                    list = [list[i]/sum * 100  for i in range(3)]
-                                    print(list)
-                                    val = 'happy'
-                                    sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                    # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                    cur.execute(sql)
-                                    val = val.encode('utf-8')
-
-                                    ## 아두이노 있을 시
-                                    # if ser.readable() :
-                                    #     sum = list[0] + list[1] + list[2]
-                                    #     list = [list[i]/sum * 100  for i in range(3)]
-                                    #     print(list)
-                                    #     val = 'happy'
-                                    #     sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                    #     # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                    #     cur.execute(sql)
-                                    #     val = val.encode('utf-8')
-                                    #     ser.write(val)
-                                    #     # print("Atomize")
-                                    # else: continue
-                                    print("자신의 감정은 happy입니다.")
-                                    list = [0,0,0]
-                                # 만약에 list의 최댓값이 neutral일 때
-                                elif (list.index(max_value) == 2): # neutral로 시리얼 통신
-                                    sum = list[0] + list[1] + list[2]
-                                    list = [list[i]/sum * 100  for i in range(3)]
-                                    print(list)
-                                    val = 'neutral'
-                                    sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                    # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                    cur.execute(sql)
-                                    val = val.encode('utf-8')
-                                    # if ser.readable() :
-                                    #     sum = list[0] + list[1] + list[2]
-                                    #     list = [list[i]/sum * 100  for i in range(3)]
-                                    #     print(list)
-                                    #     val = 'neutral'
-                                    #     sql = "INSERT INTO emotion(question_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2])
-                                    #     # sql = "INSERT INTO chart(bno,commenter,angry,neutral,happy) VALUES ('%s','%s',%f,%f,%f)" %(bno,user_id.get(),list[0],list[1],list[2])
-                                    #     cur.execute(sql)
-                                    #     val = val.encode('utf-8')
-                                    #     ser.write(val)
-                                    #     print("Atomize TURNED OFF")
-                                    # else: continue
-                                    print("자신의 감정은 neutral입니다.")
-                                    list = [0,0,0]
-                            # 혹시 error 가 생겨 설정한 시간 2초 이상이 넘어 갈 경우
-                            # 다시 2초를 초기화 하기 위한 변수 재설정
-                            elif (result > 2):
+                                # 1초를 초기화 하기 위한 Check 값 0으로 설정
+                                list[0] = list[0] / cnt;
+                                list[1] = list[1] / cnt;
+                                list[2] = list[2] / cnt;
+                                angryText = "angry 수치 : ";
+                                happyText = "happy 수치 : ";
+                                neutralText = "neutral 수치 : ";
+                                print(angryText, end='');
+                                print(list[0]);
+                                print(happyText, end='')
+                                print(list[1]);
+                                print(neutralText, end='')
+                                print(list[2]);
                                 Check = 0
-                            # 딕셔너리의 저장된 value 값의 최댓값(어떤 감정인지)을 찾아 Count를 해주어 list에 저장
-                            # list[0] 은 angry, list[1] 은, happy, list[2] 는 neutral의 Count 이다.
-                            if max(dict,key=dict.get) == 'angry':
-                                list[0] = list[0] + 1
-                            elif max(dict,key=dict.get) == 'happy':
-                                list[1] = list[1] + 1
-                            elif max(dict,key=dict.get) == 'neutral':
-                                list[2] = list[2] + 1
+                                sql = "INSERT INTO emotion(analysis_id, author_id,created_date,angry,happy,neutral) values('%s','%s',now(),%f,%f,%f)" %(quetionId,userId,list[0],list[1],list[2]);
+                                cur.execute(sql)
+                                list = [0,0,0]
+                                cnt = 0;
+                        
 
                         w = int(prob * 300)
                         cv2.rectangle(canvas, (7, (i * 35) + 5),
@@ -248,8 +176,8 @@ try:
                         cv2.rectangle(frameClone, (fX, fY), (fX + fW, fY + fH),
                                     (0, 0, 255), 2)
 
-            # cv2.imshow('your_face', frameClone)
-            # cv2.imshow("Probabilities", canvas)
+            cv2.imshow('your_face', frameClone)
+            cv2.imshow("Probabilities", canvas)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 
                 break

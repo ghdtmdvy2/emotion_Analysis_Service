@@ -86,8 +86,8 @@ while True:
     if cv2.waitKey(1) > 0: break
 
 print(id);
-sql = "select id from site_user where username='%s'" %(id);
-# sql = "select id from site_user where username='admin'";
+# sql = "select id from site_user where username='%s'" %(id);
+sql = "select id from site_user where username='admin'";
 cur.execute(sql);
 result = cur.fetchall();
 print(result);

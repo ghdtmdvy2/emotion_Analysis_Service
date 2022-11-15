@@ -72,7 +72,7 @@ list = [0,0,0]
 # ser = serial.Serial('COM5', 9600)
 # parameters for loading data and images
 detection_model_path = 'haarcascade_files/haarcascade_frontalface_default.xml'
-emotion_model_path = 'models/_mini_XCEPTION.83-0.82.hdf5'
+emotion_model_path = 'models/mini_XCEPTION.83-0.82.hdf5'
 
 # hyper-parameters for bounding boxes shape
 # loading models
@@ -81,7 +81,7 @@ emotion_classifier = load_model(emotion_model_path, compile=False)
 EMOTIONS = ["angry" , "happy", "neutral"]
 
 # starting video streaming
-# cv2.namedWindow('your_face')
+cv2.namedWindow('your_face')
 camera = cv2.VideoCapture(0)
 try:
     while True:
@@ -248,8 +248,8 @@ try:
                         cv2.rectangle(frameClone, (fX, fY), (fX + fW, fY + fH),
                                     (0, 0, 255), 2)
 
-            # cv2.imshow('your_face', frameClone)
-            # cv2.imshow("Probabilities", canvas)
+            cv2.imshow('your_face', frameClone)
+            cv2.imshow("Probabilities", canvas)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 
                 break
